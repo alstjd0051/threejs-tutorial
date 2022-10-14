@@ -580,6 +580,11 @@ loader-runner@^4.2.0:
   resolved "https://registry.yarnpkg.com/loader-runner/-/loader-runner-4.3.0.tgz#c1b4a163b99f614830353b16755e7149ac2314e1"
   integrity sha512-3R/1M+yS3j5ou80Me59j7F9IMs4PXs3VqRrm0TU3AbKPxlmpoY1TNscJV/oGJXo8qCatFGTfDbY6W6ipGOYXfg==
 
+loader-utils@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/loader-utils/-/loader-utils-3.2.0.tgz#bcecc51a7898bee7473d4bc6b845b23af8304d4f"
+  integrity sha512-HVl9ZqccQihZ7JM85dco1MvO9G+ONvxoGa9rkhzFsneGLKSUg1gJf9bWzhRhcvm2qChhWpebQhP44qxjKIUCaQ==
+
 locate-path@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/locate-path/-/locate-path-5.0.0.tgz#1afba396afd676a6d42504d0a67a3a7eb9f62aa0"
@@ -906,6 +911,13 @@ ts-loader@^9.4.1:
     enhanced-resolve "^5.0.0"
     micromatch "^4.0.0"
     semver "^7.3.4"
+
+ts-shader-loader@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/ts-shader-loader/-/ts-shader-loader-2.0.1.tgz#075ab16435e97a0302bb2b36eb1c74ec1eccc563"
+  integrity sha512-nCXbIxxada8p8XrunZnkfQgA5n1EuVRW/0C4lIGjDMo7kkYoLjjaf6I8I4+ZpneOi1oSVaXvJmDuv/7nfheB3w==
+  dependencies:
+    loader-utils "^3.2.0"
 
 typescript@^4.8.4:
   version "4.8.4"
