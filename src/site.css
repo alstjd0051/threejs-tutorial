@@ -9,7 +9,7 @@
     display: grid;
     height: 35px;
     grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: 35px
+    grid-template-rows: 35px;
 }
 
 .item1 {
