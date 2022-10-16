@@ -1,31 +1,78 @@
-import { CheckWebGPU } from "./helper";
+import { InitGPU, CreateGPUBuffer } from "./helper";
 import shader from "./shader.wgsl";
 import "./site.css";
 
-const CreateTriangle = async () => {
-  const checkgpu = CheckWebGPU();
-  if (checkgpu.includes("Your current browser does not support WebGPU!")) {
-    console.log(checkgpu);
-    throw "Your current browser does not support WebGPU!";
-  }
+const CreateSquare = async () => {
+  const gpu = await InitGPU();
+  const device = gpu.device;
 
-  const canvas = document.getElementById("canvas-webgpu") as HTMLCanvasElement;
-  const adapter = (await navigator.gpu?.requestAdapter()) as GPUAdapter;
-  const device = (await adapter?.requestDevice()) as GPUDevice;
-  const context = canvas.getContext("webgpu") as GPUCanvasContext;
-  const format = "bgra8unorm";
-  context.configure({
-    device: device,
-    format: format,
-  });
+  const vertexData = new Float32Array([
+    -0.5,
+    -0.5, // vertex a
+    0.5,
+    -0.5, // vertex b
+    -0.5,
+    0.5, // vertex d
+    -0.5,
+    0.5, // vertex d
+    0.5,
+    -0.5, // vertex b
+    0.5,
+    0.5, // vertex c
+  ]);
 
-  //const shader = Shaders();
+  const colorData = new Float32Array([
+    1,
+    0,
+    0, // vertex a: red
+    0,
+    1,
+    0, // vertex b: green
+    1,
+    1,
+    0, // vertex d: yellow
+    1,
+    1,
+    0, // vertex d: yellow
+    0,
+    1,
+    0, // vertex b: green
+    0,
+    0,
+    1, // vertex c: blue
+  ]);
+
+  const vertexBuffer = CreateGPUBuffer(device, vertexData);
+  const colorBuffer = CreateGPUBuffer(device, colorData);
+
   const pipeline = device.createRenderPipeline({
     vertex: {
       module: device.createShaderModule({
         code: shader,
       }),
       entryPoint: "vs_main",
+      buffers: [
+        {
+          arrayStride: 8,
+          attributes: [
+            {
+              shaderLocation: 0,
+              format: "float32x2",
+              offset: 0,
+            },
+          ],
+        },
+        {
+          arrayStride: 12,
+          attributes: [
+            {
+              shaderLocation: 1,
+              format: "float32x3",
+              offset: 0,
+            },
+          ],
+        },
+      ],
     },
     fragment: {
       module: device.createShaderModule({
@@ -34,7 +81,7 @@ const CreateTriangle = async () => {
       entryPoint: "fs_main",
       targets: [
         {
-          format: format,
+          format: gpu.format as GPUTextureFormat,
         },
       ],
     },
@@ -44,27 +91,29 @@ const CreateTriangle = async () => {
   });
 
   const commandEncoder = device.createCommandEncoder();
-  const textureView = context.getCurrentTexture().createView();
+  const textureView = gpu.context.getCurrentTexture().createView();
   const renderPass = commandEncoder.beginRenderPass({
     colorAttachments: [
       {
         view: textureView,
         clearValue: { r: 0.2, g: 0.247, b: 0.314, a: 1.0 }, //background color
-        loadOp: "clear",
         loadValue: { r: 0.2, g: 0.247, b: 0.314, a: 1.0 },
+        loadOp: "clear",
         storeOp: "store",
       },
     ],
   });
   renderPass.setPipeline(pipeline);
-  renderPass.draw(3, 1, 0, 0);
+  renderPass.setVertexBuffer(0, vertexBuffer);
+  renderPass.setVertexBuffer(1, colorBuffer);
+  renderPass.draw(6);
   renderPass.end();
 
   device.queue.submit([commandEncoder.finish()]);
 };
 
-CreateTriangle();
+CreateSquare();
 
 window.addEventListener("resize", function () {
-  CreateTriangle();
+  CreateSquare();
 });
